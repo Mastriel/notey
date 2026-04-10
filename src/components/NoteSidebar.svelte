@@ -50,5 +50,5 @@
     <NoteListing bind:note={note} selected={editorManager.activePage?.id === note.id} onclick={() => onNoteClick(note)} ondelete={() => noteStore.removeNoteByName(note.name)}
 	/>
   {/each}
-</div>ß
+</div>
 

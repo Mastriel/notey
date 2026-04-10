@@ -3,7 +3,7 @@
   import {Editor} from "@tiptap/core";
   import StarterKit from "@tiptap/starter-kit";
   import {Markdown} from "tiptap-markdown";
-  import { HtmlEmbed } from "./extensions/HtmlEmbed";
+  import {HtmlEmbed } from "./extensions/HtmlEmbed";
   import {editorManager} from "../../notes/editorManager.svelte";
   import {type Note, noteStore} from "../../notes/notes.svelte";
 
@@ -138,8 +138,11 @@
     { name: "Bold", command: (instance) => instance.chain().toggleBold().run() },
     { name: "Italic", command: (instance) => instance.chain().toggleItalic().run() },
     { name: "List", command: (instance) => instance.chain().toggleBulletList().run() },
-    { name: "Code", command: (instance) => instance.chain().toggleCodeBlock().run() },
-    { name: "HTML", command: openHtmlEmbedModal },
+	{ name: "Code", command: (instance) => instance.chain().toggleCodeBlock().run() },
+  	{ name: "1. List", command: (instance) => instance.chain().toggleOrderedList().run() },
+	{ name: "HTML", command: openHtmlEmbedModal },
+
+
   ]
 </script>
 
@@ -226,5 +229,14 @@
 
   :global(.tiptap h6) {
       @apply text-xs font-bold;
+  }
+  :global(.tiptap ol) {
+	  @apply my-4 list-decimal pl-6;
+  }
+  :global(.tiptap ol li) {
+	  @apply mb-2;
+  }
+  :global(.tiptap ol li:first-child) {
+	  @apply mt-2;
   }
 </style>
