@@ -1,9 +1,9 @@
 import type {Note} from "./notes.svelte";
-import type {ComponentData} from "./componentData.svelte";
+import type {ComponentData, ImageData} from "./componentData.svelte";
 
-export type Editor = "note" | "component"
+export type Editor = "note" | "component" | "image"
 
-export type Page = Note | ComponentData
+export type Page = Note | ComponentData | ImageData
 
 export class EditorManager {
   public activePage: Page | undefined = $state(undefined)

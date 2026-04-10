@@ -6,3 +6,10 @@ export type ComponentData = {
   script: string,
   id: string
 }
+
+export type ImageData = {
+  type: "image"
+  name: string
+  src: string
+  id: string
+}
