@@ -35,9 +35,18 @@
     return page as Note;
   });
 
+  const getMarkdownContent = (instance: Editor) =>
+    (
+      instance.storage as {
+        markdown?: {
+          getMarkdown?: () => string;
+        };
+      }
+    ).markdown?.getMarkdown?.() ?? "";
+
   const ensureEditorContentMatchesActiveNote = () => {
     if (!editor || !activeNote) return;
-    const currentMarkdown = editor.storage.markdown?.getMarkdown?.() ?? "";
+    const currentMarkdown = getMarkdownContent(editor);
     const incomingMarkdown = String(activeNote.content ?? "");
     if (currentMarkdown === incomingMarkdown) return;
     editor.commands.setContent(incomingMarkdown);
@@ -64,7 +73,7 @@
 
     editor.on("update", ({ editor: instance }) => {
       if (!activeNote) return;
-      activeNote.content = instance.storage.markdown.getMarkdown();
+      activeNote.content = getMarkdownContent(instance);
       noteStore.saveAll();
     });
 
@@ -187,16 +196,16 @@
       command: (instance) => instance.chain().toggleItalic().run(),
     },
     {
-      name: "List",
-      command: (instance) => instance.chain().toggleBulletList().run(),
-    },
-    {
-      name: "Code",
+      name: "Monospace",
       command: (instance) => instance.chain().toggleCodeBlock().run(),
     },
     {
-      name: "1. List",
+      name: "Ordered List",
       command: (instance) => instance.chain().toggleOrderedList().run(),
+    },
+    {
+      name: "Bullet List",
+      command: (instance) => instance.chain().toggleBulletList().run(),
     },
     { name: "HTML", command: openHtmlEmbedModal },
   ];
@@ -305,13 +314,12 @@
   :global(.tiptap h6) {
     @apply text-xs font-bold;
   }
+
+  :global(.tiptap ul) {
+      @apply my-4 list-disc pl-6;
+  }
+
   :global(.tiptap ol) {
     @apply my-4 list-decimal pl-6;
-  }
-  :global(.tiptap ol li) {
-    @apply mb-2;
-  }
-  :global(.tiptap ol li:first-child) {
-    @apply mt-2;
   }
 </style>

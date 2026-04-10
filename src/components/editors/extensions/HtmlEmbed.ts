@@ -69,6 +69,8 @@ export const HtmlEmbed = TiptapNode.create({
 
       const deleteNode = () => {
         const position = getPos();
+        if (position === undefined) return;
+
         const tr = editor.state.tr.delete(
           position,
           position + currentNode.nodeSize,
@@ -77,10 +79,13 @@ export const HtmlEmbed = TiptapNode.create({
       };
 
       const onEditClick = () => {
+        const position = getPos();
+        if (position === undefined) return;
+
         window.dispatchEvent(
           new CustomEvent("html-embed:edit", {
             detail: {
-              position: getPos(),
+              position,
               html: String(currentNode.attrs.html ?? ""),
             },
           }),
