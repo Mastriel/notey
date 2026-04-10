@@ -17,7 +17,6 @@ const NOTE_ID_PREFIX = "notey::note::"
 
 export class NoteStore {
   public notes: Note[] = $state([])
-    removeNoteById: any;
 
   constructor() {
 
@@ -46,6 +45,14 @@ export class NoteStore {
     const note = this.notes?.find(it => it.name == name)
     if (!note) return
     this.notes.splice(this.notes.indexOf(note), 1)
+    this.saveAll()
+  }
+
+  public removeNoteById(id: string) {
+    const note = this.notes.find(it => it.id === id)
+    if (!note) return
+    this.notes.splice(this.notes.indexOf(note), 1)
+    this.saveAll()
   }
 }
 
