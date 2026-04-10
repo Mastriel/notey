@@ -1,0 +1,10 @@
+<script lang="ts">
+  /* script tag here! */
+</script>
+
+<!-- html here! -->
+<p>hello, world! %s</p>
+
+<style>
+  /* css here! */
+</style>

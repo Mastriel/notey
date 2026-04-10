@@ -3,7 +3,11 @@
 export type ComponentData = {
   type: "component"
   name: string,
-  script: string,
+  tagName: string,
+  source: string,
+  template?: string,
+  styles?: string,
+  script?: string,
   id: string
 }
 

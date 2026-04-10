@@ -1,4 +1,6 @@
-import { mergeAttributes, Node } from "@tiptap/core";
+import { mergeAttributes, Node as TiptapNode } from "@tiptap/core";
+import { mount, unmount } from "svelte";
+import HtmlEmbedNodeView from "./HtmlEmbedNodeView.svelte";
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -31,7 +33,7 @@ const decodeHtmlPayload = (value: string | null) => {
   }
 };
 
-export const HtmlEmbed = Node.create({
+export const HtmlEmbed = TiptapNode.create({
   name: "htmlEmbed",
   group: "block",
   atom: true,
@@ -62,29 +64,7 @@ export const HtmlEmbed = Node.create({
       let currentNode = node;
 
       const dom = document.createElement("div");
-      dom.className = "my-2 rounded border border-gray-300 bg-gray-50 p-2";
       dom.contentEditable = "false";
-
-      const toolbar = document.createElement("div");
-      toolbar.className = "mb-2 flex items-center justify-end gap-1";
-
-      const editButton = document.createElement("button");
-      editButton.type = "button";
-      editButton.className = "rounded border border-gray-300 bg-white px-2 py-1 text-xs hover:bg-gray-100";
-      editButton.textContent = "Edit";
-
-      const deleteButton = document.createElement("button");
-      deleteButton.type = "button";
-      deleteButton.className = "rounded border border-red-300 bg-white px-2 py-1 text-xs text-red-700 hover:bg-red-50";
-      deleteButton.textContent = "Delete";
-
-      toolbar.append(editButton, deleteButton);
-      dom.appendChild(toolbar);
-
-      const body = document.createElement("div");
-      body.className = "html-embed-body";
-      body.innerHTML = String(currentNode.attrs.html ?? "");
-      dom.appendChild(body);
 
       const deleteNode = () => {
         const position = getPos();
@@ -105,20 +85,43 @@ export const HtmlEmbed = Node.create({
         deleteNode();
       };
 
-      editButton.addEventListener("click", onEditClick);
-      deleteButton.addEventListener("click", onDeleteClick);
+      let mounted = mount(HtmlEmbedNodeView, {
+        target: dom,
+        props: {
+          html: String(currentNode.attrs.html ?? ""),
+          onEdit: onEditClick,
+          onDelete: onDeleteClick,
+        },
+      });
 
       return {
         dom,
+        stopEvent: (event) => {
+          const target = event.target;
+          if (!(target instanceof Node)) return false;
+
+          // Let embed controls and embedded HTML handle their own events.
+          return dom.contains(target);
+        },
+        ignoreMutation: () => true,
         update: (updatedNode) => {
           if (updatedNode.type.name !== "htmlEmbed") return false;
           currentNode = updatedNode;
-          body.innerHTML = String(currentNode.attrs.html ?? "");
+
+          unmount(mounted);
+          mounted = mount(HtmlEmbedNodeView, {
+            target: dom,
+            props: {
+              html: String(currentNode.attrs.html ?? ""),
+              onEdit: onEditClick,
+              onDelete: onDeleteClick,
+            },
+          });
+
           return true;
         },
         destroy: () => {
-          editButton.removeEventListener("click", onEditClick);
-          deleteButton.removeEventListener("click", onDeleteClick);
+          unmount(mounted);
         },
       };
     };

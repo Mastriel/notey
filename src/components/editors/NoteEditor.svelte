@@ -18,6 +18,10 @@
     html: string;
   };
 
+  type ComponentTagInsertDetail = {
+    html: string;
+  };
+
   const normalizeHtmlEmbedInput = (value: string) =>
     value
       .replaceAll("“", '"')
@@ -73,10 +77,21 @@
       isHtmlEmbedModalOpen = true;
     };
 
+    const onComponentTagInsertRequest = (event: Event) => {
+      const { detail } = event as CustomEvent<ComponentTagInsertDetail>;
+      if (!detail?.html) return;
+
+      editingHtmlEmbedPosition = undefined;
+      htmlEmbedDraft = detail.html;
+      isHtmlEmbedModalOpen = true;
+    };
+
     window.addEventListener("html-embed:edit", onHtmlEmbedEditRequest as EventListener);
+    window.addEventListener("component-tag:insert", onComponentTagInsertRequest as EventListener);
 
     return () => {
       window.removeEventListener("html-embed:edit", onHtmlEmbedEditRequest as EventListener);
+      window.removeEventListener("component-tag:insert", onComponentTagInsertRequest as EventListener);
       editor?.destroy();
       editor = undefined;
     };
