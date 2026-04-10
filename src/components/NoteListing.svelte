@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Trash2, PencilLine } from "@lucide/svelte";
-  import type { Note } from "../notes/notes.svelte";
+  import {type Note, noteStore} from "../notes/notes.svelte";
   import IconButton from "./IconButton.svelte";
   import {tick} from "svelte";
 
@@ -29,6 +29,7 @@
 
   const unfocus = () => {
     isEditingName = false
+    noteStore.saveAll();
   }
 
   const onKeyDown = (event: KeyboardEvent) => {

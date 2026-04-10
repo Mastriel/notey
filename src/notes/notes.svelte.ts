@@ -9,8 +9,32 @@ export type Note = {
   id: string
 }
 
+type SavedNotesStructure = {
+  [id: string]: Note
+}
+
+const NOTE_ID_PREFIX = "notey::note::"
+
 export class NoteStore {
   public notes: Note[] = $state([])
+
+  constructor() {
+
+    const notesData = localStorage.getItem("notes")
+    const notes = (notesData ? JSON.parse(notesData) : {}) as SavedNotesStructure
+
+    for (const id in notes) {
+      this.notes.push(notes[id])
+    }
+  }
+
+  public saveAll() {
+    const notes = {} as SavedNotesStructure
+    for (const note of this.notes) {
+      notes[NOTE_ID_PREFIX + note.id] = note
+    }
+    localStorage.setItem("notes", JSON.stringify(notes))
+  }
 
   public addNote(note: Note) {
     const statefulNote = $state(note)
