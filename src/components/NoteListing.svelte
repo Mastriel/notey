@@ -66,7 +66,7 @@
     <IconButton
       tooltip="Delete note"
       tooltipPlacement="left"
-      onclick={(event) => {
+      onclick={(event: MouseEvent) => {
         event.stopPropagation();
         ondelete?.();
       }}

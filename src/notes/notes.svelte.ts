@@ -17,6 +17,7 @@ const NOTE_ID_PREFIX = "notey::note::"
 
 export class NoteStore {
   public notes: Note[] = $state([])
+    removeNoteById: any;
 
   constructor() {
 

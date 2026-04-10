@@ -34,7 +34,8 @@
         id: v4()
       })
       noteStore.saveAll();
-    }
+
+	}
 </script>
 
 <div class="p-1 flex gap-1 border-b bg-gray-50 border-gray-300">
@@ -45,7 +46,7 @@
 
 <div class="flex flex-col gap-1 p-1">
   {#each noteStore.notes as note (note.id)}
-    <NoteListing bind:note={note} selected={editorManager.activePage?.id === note.id} onclick={() => onNoteClick(note)}
+    <NoteListing bind:note={note} selected={editorManager.activePage?.id === note.id} onclick={() => onNoteClick(note)} ondelete={() => noteStore.removeNoteById(note.id)}
 	/>
   {/each}
 </div>
