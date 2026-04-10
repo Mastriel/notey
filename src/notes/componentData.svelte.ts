@@ -3,5 +3,6 @@
 export type ComponentData = {
   type: "component"
   name: string,
-  script: string
+  script: string,
+  id: string
 }

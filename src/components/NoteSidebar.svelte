@@ -4,6 +4,7 @@
     import NoteListing from "./NoteListing.svelte";
     import {type Note, noteStore} from "../notes/notes.svelte";
     import {editorManager} from "../notes/editorManager.svelte";
+    import {v4} from "uuid";
 
 
     const onNoteClick = (note: Note) => {
@@ -31,6 +32,7 @@
         name: getNextUntitledName(),
         type: "note",
         content: "",
+        id: v4()
       })
     }
 </script>
@@ -42,9 +44,8 @@
 </div>
 
 <div class="flex flex-col gap-1 p-1">
-  {#each noteStore.notes as note (note.name)}
-    <NoteListing bind:note={note} selected={editorManager.activePage?.name === note.name} onclick={() => onNoteClick(dummy)}></NoteListing>
-
+  {#each noteStore.notes as note (note.id)}
+    <NoteListing bind:note={note} selected={editorManager.activePage?.id === note.id} onclick={() => onNoteClick(note)}></NoteListing>
   {/each}
 
 </div>

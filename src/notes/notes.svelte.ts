@@ -6,6 +6,7 @@ export type Note = {
   name: string,
   type: "note",
   content: NoteContent,
+  id: string
 }
 
 export class NoteStore {

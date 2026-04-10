@@ -45,12 +45,12 @@
   );
 </script>
 
-<div class="group relative inline-flex">
+<div class="group/tooltip relative inline-flex">
   {@render children?.()}
 
   <div
     role="tooltip"
-    class={`pointer-events-none absolute z-50 whitespace-nowrap rounded-md bg-gray-100 border border-gray-300 px-2 py-1 text-xs font-medium opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100 ${positionClass}`}
+    class={`pointer-events-none absolute z-50 whitespace-nowrap rounded-md bg-gray-100 border border-gray-300 px-2 py-1 text-xs font-medium opacity-0 shadow-lg transition-opacity duration-150 group-hover/tooltip:opacity-100 ${positionClass}`}
   >
     {text}
     <div class={`absolute h-2 w-2 bg-gray-100 border-gray-300 ${arrowBorderClass} ${arrowClass}`}></div>
