@@ -8,43 +8,33 @@ type DeleteProps = {
 	noteName?: string;
 	note?: Note;
 	onclick?: (event: MouseEvent) => void;
-	onClick?: (event: MouseEvent) => void;
 	onDelete?: (name: string) => void;
 };
 
-let { noteName, note, onclick, onClick, onDelete }: DeleteProps = $props();
+let { noteName, note, onclick, onDelete }: DeleteProps = $props();
 
 function handleDelete(event: MouseEvent) {
 	event.stopPropagation();
 
 	const targetName = noteName ?? note?.name;
+
 	if (targetName) {
 		noteStore.removeNoteByName(targetName);
 		onDelete?.(targetName);
 	}
 
 	onclick?.(event);
-	onClick?.(event);
 }
 
 </script>
-
-<IconButton 
-	tooltip="Delete Note" 
-	onclick={handleDelete}
-	aria-label="Delete note"
-	>
-	<TrashIcon class="text-gray-500" size={16} 
-	/>
-  </IconButton>
-
   <button
 	type="button"
-	class="hover:bg-gray-50 rounded-md p-1"
+	class="hover:bg-red-50 group rounded-md p-1 transition-colors"
 	onclick={handleDelete}
 	aria-label="Delete note"
   >
-	<TrashIcon class="text-gray-500" size={16} />
+	<TrashIcon class="text-gray-500 group-hover:text-red-500 transition-colors"
+	 size={16} />x
   </button> */
 
 
