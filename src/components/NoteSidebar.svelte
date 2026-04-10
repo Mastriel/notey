@@ -11,8 +11,6 @@
       editorManager.activePage = note
     }
 
-    const dummy = { name: "abc", type: "note", content: 'wah' } as const
-
     const getNextUntitledName = () => {
       let nextUntitledIndex = 1
 
@@ -34,6 +32,7 @@
         content: "",
         id: v4()
       })
+      noteStore.saveAll();
     }
 </script>
 
@@ -47,5 +46,4 @@
   {#each noteStore.notes as note (note.id)}
     <NoteListing bind:note={note} selected={editorManager.activePage?.id === note.id} onclick={() => onNoteClick(note)}></NoteListing>
   {/each}
-
 </div>
