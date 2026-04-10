@@ -1,13 +1,27 @@
 <script lang="ts">
-    import { Accordion, Button } from "bits-ui";
+  import { Button } from "bits-ui";
+  import type { Snippet } from "svelte";
+  import type { HTMLAttributes } from "svelte/elements";
+  import Tooltip, { type Placement } from "./Tooltip.svelte";
 
-    import { FilePlusCorner } from '@lucide/svelte'
-    import type {Snippet} from "svelte";
-
-    const { children } : { children: Snippet } = $props();
-
+  const {
+    children,
+    tooltip,
+    tooltipPlacement = 'bottom',
+    ...rest
+  }: { tooltip?: string; tooltipPlacement?: Placement, children: Snippet } & HTMLAttributes<HTMLButtonElement> = $props();
 </script>
 
-<Button.Root class="hover:bg-gray-200 rounded-md p-1">
-  {@render children?.()}
-</Button.Root>
+{#if tooltip}
+  <Tooltip text={tooltip} placement={tooltipPlacement}>
+    {#snippet children()}
+      <Button.Root class="rounded-md p-1 hover:bg-gray-200" {...rest}>
+        {@render children?.()}
+      </Button.Root>
+    {/snippet}
+  </Tooltip>
+{:else}
+  <Button.Root class="rounded-md p-1 hover:bg-gray-200" {...rest}>
+    {@render children?.()}
+  </Button.Root>
+{/if}
