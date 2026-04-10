@@ -2,6 +2,7 @@
 	import { TrashIcon } from '@lucide/svelte'
 	import IconButton from "./IconButton.svelte";
 	import { noteStore, type Note } from "../notes/notes.svelte";
+	import NoteSidebar from './NoteSidebar.svelte';
 
 type DeleteProps = {
 	noteName?: string;
@@ -37,3 +38,14 @@ function handleDelete(event: MouseEvent) {
 	/>
   </IconButton>
 
+  <button
+	type="button"
+	class="hover:bg-gray-50 rounded-md p-1"
+	onclick={handleDelete}
+	aria-label="Delete note"
+  >
+	<TrashIcon class="text-gray-500" size={16} />
+  </button> */
+
+
+  

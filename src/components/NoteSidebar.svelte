@@ -4,6 +4,7 @@
     import NoteListing from "./NoteListing.svelte";
     import {type Note, noteStore} from "../notes/notes.svelte";
     import {editorManager} from "../notes/editorManager.svelte";
+	
     import {v4} from "uuid";
 
 
@@ -45,7 +46,9 @@
 
 <div class="flex flex-col gap-1 p-1">
   {#each noteStore.notes as note (note.id)}
-    <NoteListing bind:note={note} selected={editorManager.activePage?.id === note.id} onclick={() => onNoteClick(note)}></NoteListing>
+    <NoteListing bind:note={note} selected={editorManager.activePage?.id === note.id} onclick={() => onNoteClick(note)}
+	/>
   {/each}
 
 </div>
+
