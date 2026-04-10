@@ -27,7 +27,9 @@ export class ComponentStore {
     if (typeof localStorage === "undefined") return;
 
     const componentsData = localStorage.getItem(COMPONENT_STORAGE_KEY);
-    const components = (componentsData ? JSON.parse(componentsData) : {}) as SavedComponentsStructure;
+    const components = (
+      componentsData ? JSON.parse(componentsData) : {}
+    ) as SavedComponentsStructure;
 
     for (const id in components) {
       const raw = components[id];

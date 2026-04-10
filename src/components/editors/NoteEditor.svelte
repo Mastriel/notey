@@ -1,11 +1,11 @@
 <script lang="ts">
-  import {onMount} from "svelte";
-  import {Editor} from "@tiptap/core";
+  import { onMount } from "svelte";
+  import { Editor } from "@tiptap/core";
   import StarterKit from "@tiptap/starter-kit";
-  import {Markdown} from "tiptap-markdown";
-  import {HtmlEmbed } from "./extensions/HtmlEmbed";
-  import {editorManager} from "../../notes/editorManager.svelte";
-  import {type Note, noteStore} from "../../notes/notes.svelte";
+  import { Markdown } from "tiptap-markdown";
+  import { HtmlEmbed } from "./extensions/HtmlEmbed";
+  import { editorManager } from "../../notes/editorManager.svelte";
+  import { type Note, noteStore } from "../../notes/notes.svelte";
 
   let element: HTMLDivElement | undefined = $state();
   let editor: Editor | undefined = $state();
@@ -86,12 +86,24 @@
       isHtmlEmbedModalOpen = true;
     };
 
-    window.addEventListener("html-embed:edit", onHtmlEmbedEditRequest as EventListener);
-    window.addEventListener("component-tag:insert", onComponentTagInsertRequest as EventListener);
+    window.addEventListener(
+      "html-embed:edit",
+      onHtmlEmbedEditRequest as EventListener,
+    );
+    window.addEventListener(
+      "component-tag:insert",
+      onComponentTagInsertRequest as EventListener,
+    );
 
     return () => {
-      window.removeEventListener("html-embed:edit", onHtmlEmbedEditRequest as EventListener);
-      window.removeEventListener("component-tag:insert", onComponentTagInsertRequest as EventListener);
+      window.removeEventListener(
+        "html-embed:edit",
+        onHtmlEmbedEditRequest as EventListener,
+      );
+      window.removeEventListener(
+        "component-tag:insert",
+        onComponentTagInsertRequest as EventListener,
+      );
       editor?.destroy();
       editor = undefined;
     };
@@ -108,21 +120,21 @@
     editor.commands.focus();
   };
 
-  type CommandFn = (instance: Editor) => void
-  type Tool = { name: string; command: CommandFn }
+  type CommandFn = (instance: Editor) => void;
+  type Tool = { name: string; command: CommandFn };
 
   const openHtmlEmbedModal = (_instance: Editor) => {
     editingHtmlEmbedPosition = undefined;
     htmlEmbedDraft = "";
     isHtmlEmbedModalOpen = true;
-  }
+  };
 
   const closeHtmlEmbedModal = () => {
     isHtmlEmbedModalOpen = false;
     editingHtmlEmbedPosition = undefined;
     htmlEmbedDraft = "";
     editor?.commands.focus();
-  }
+  };
 
   const confirmHtmlEmbed = () => {
     const html = normalizeHtmlEmbedInput(htmlEmbedDraft);
@@ -132,41 +144,74 @@
       const node = editor.state.doc.nodeAt(editingHtmlEmbedPosition);
 
       if (node?.type.name === "htmlEmbed") {
-        const tr = editor.state.tr.setNodeMarkup(editingHtmlEmbedPosition, undefined, {
-          ...node.attrs,
-          html,
-        });
-          editor.view.dispatch(tr);
+        const tr = editor.state.tr.setNodeMarkup(
+          editingHtmlEmbedPosition,
+          undefined,
+          {
+            ...node.attrs,
+            html,
+          },
+        );
+        editor.view.dispatch(tr);
       }
     } else {
       editor.chain().focus().insertHtmlEmbed(html).run();
     }
 
     closeHtmlEmbedModal();
-  }
+  };
 
   const tools: Tool[] = [
-    { name: "H1", command: (instance) => instance.chain().toggleHeading({ level: 1 }).run() },
-    { name: "H2", command: (instance) => instance.chain().toggleHeading({ level: 2 }).run() },
-    { name: "H3", command: (instance) => instance.chain().toggleHeading({ level: 3 }).run() },
-    { name: "H4", command: (instance) => instance.chain().toggleHeading({ level: 4 }).run() },
-    { name: "Bold", command: (instance) => instance.chain().toggleBold().run() },
-    { name: "Italic", command: (instance) => instance.chain().toggleItalic().run() },
-    { name: "List", command: (instance) => instance.chain().toggleBulletList().run() },
-	{ name: "Code", command: (instance) => instance.chain().toggleCodeBlock().run() },
-  	{ name: "1. List", command: (instance) => instance.chain().toggleOrderedList().run() },
-	{ name: "HTML", command: openHtmlEmbedModal },
-
-
-  ]
+    {
+      name: "H1",
+      command: (instance) => instance.chain().toggleHeading({ level: 1 }).run(),
+    },
+    {
+      name: "H2",
+      command: (instance) => instance.chain().toggleHeading({ level: 2 }).run(),
+    },
+    {
+      name: "H3",
+      command: (instance) => instance.chain().toggleHeading({ level: 3 }).run(),
+    },
+    {
+      name: "H4",
+      command: (instance) => instance.chain().toggleHeading({ level: 4 }).run(),
+    },
+    {
+      name: "Bold",
+      command: (instance) => instance.chain().toggleBold().run(),
+    },
+    {
+      name: "Italic",
+      command: (instance) => instance.chain().toggleItalic().run(),
+    },
+    {
+      name: "List",
+      command: (instance) => instance.chain().toggleBulletList().run(),
+    },
+    {
+      name: "Code",
+      command: (instance) => instance.chain().toggleCodeBlock().run(),
+    },
+    {
+      name: "1. List",
+      command: (instance) => instance.chain().toggleOrderedList().run(),
+    },
+    { name: "HTML", command: openHtmlEmbedModal },
+  ];
 </script>
 
 {#if activeNote}
   <div class="flex h-full min-h-0 flex-col gap-2 overflow-hidden p-1.25">
-    <div class="flex-none flex flex-wrap items-center gap-1 border-b border-gray-300 pb-1">
+    <div
+      class="flex-none flex flex-wrap items-center gap-1 border-b border-gray-300 pb-1"
+    >
       {#each tools as toolItem (toolItem.name)}
-        <button class="rounded-md px-2 py-1 text-xs hover:bg-gray-100"
-                onclick={() => runCommand(toolItem.command)}>{toolItem.name}
+        <button
+          class="rounded-md px-2 py-1 text-xs hover:bg-gray-100"
+          onclick={() => runCommand(toolItem.command)}
+          >{toolItem.name}
         </button>
       {/each}
     </div>
@@ -192,8 +237,14 @@
             if (event.key === "Escape") closeHtmlEmbedModal();
           }}
         >
-          <h2 class="text-sm font-semibold text-gray-900">{editingHtmlEmbedPosition !== undefined ? "Edit HTML Embed" : "Embed HTML"}</h2>
-          <p class="mt-1 text-xs text-gray-600">Paste raw HTML to insert as an embedded block.</p>
+          <h2 class="text-sm font-semibold text-gray-900">
+            {editingHtmlEmbedPosition !== undefined
+              ? "Edit HTML Embed"
+              : "Embed HTML"}
+          </h2>
+          <p class="mt-1 text-xs text-gray-600">
+            Paste raw HTML to insert as an embedded block.
+          </p>
 
           <textarea
             class="mt-2 h-44 w-full rounded-md border border-gray-300 p-2 font-mono text-xs outline-none focus:border-gray-500"
@@ -202,8 +253,17 @@
           ></textarea>
 
           <div class="mt-3 flex justify-end gap-2">
-            <button class="rounded-md border border-gray-300 px-3 py-1.5 text-xs hover:bg-gray-100" onclick={closeHtmlEmbedModal}>Cancel</button>
-            <button class="rounded-md bg-gray-900 px-3 py-1.5 text-xs text-white hover:bg-gray-800" onclick={confirmHtmlEmbed}>{editingHtmlEmbedPosition !== undefined ? "Save" : "Insert"}</button>
+            <button
+              class="rounded-md border border-gray-300 px-3 py-1.5 text-xs hover:bg-gray-100"
+              onclick={closeHtmlEmbedModal}>Cancel</button
+            >
+            <button
+              class="rounded-md bg-gray-900 px-3 py-1.5 text-xs text-white hover:bg-gray-800"
+              onclick={confirmHtmlEmbed}
+              >{editingHtmlEmbedPosition !== undefined
+                ? "Save"
+                : "Insert"}</button
+            >
           </div>
         </div>
       </div>
@@ -216,42 +276,42 @@
 {/if}
 
 <style>
-	@reference "tailwindcss";
+  @reference "tailwindcss";
 
   :global(.tiptap) {
     min-height: 100%;
   }
 
   :global(.tiptap h1) {
-      @apply text-2xl font-bold;
+    @apply text-2xl font-bold;
   }
 
   :global(.tiptap h2) {
-      @apply text-xl font-bold;
+    @apply text-xl font-bold;
   }
 
   :global(.tiptap h3) {
-      @apply text-lg font-bold;
+    @apply text-lg font-bold;
   }
 
   :global(.tiptap h4) {
-      @apply text-base font-bold;
+    @apply text-base font-bold;
   }
 
   :global(.tiptap h5) {
-      @apply text-sm font-bold;
+    @apply text-sm font-bold;
   }
 
   :global(.tiptap h6) {
-      @apply text-xs font-bold;
+    @apply text-xs font-bold;
   }
   :global(.tiptap ol) {
-	  @apply my-4 list-decimal pl-6;
+    @apply my-4 list-decimal pl-6;
   }
   :global(.tiptap ol li) {
-	  @apply mb-2;
+    @apply mb-2;
   }
   :global(.tiptap ol li:first-child) {
-	  @apply mt-2;
+    @apply mt-2;
   }
 </style>

@@ -1,8 +1,8 @@
 <script lang="ts">
   import { Trash2, PencilLine } from "@lucide/svelte";
-  import {type Note, noteStore} from "../notes/notes.svelte";
+  import { type Note, noteStore } from "../notes/notes.svelte";
   import IconButton from "./IconButton.svelte";
-  import {tick} from "svelte";
+  import { tick } from "svelte";
 
   const {
     note = $bindable(),
@@ -18,38 +18,45 @@
 
   const startEditingName = async () => {
     isEditingName = true;
-    await tick()
-    nameInput?.focus()
-  }
+    await tick();
+    nameInput?.focus();
+  };
 
   let isEditingName = $state(false);
 
   let nameInput: HTMLInputElement | undefined = $state();
 
-
   const unfocus = () => {
-    isEditingName = false
+    isEditingName = false;
     noteStore.saveAll();
-  }
+  };
 
   const onKeyDown = (event: KeyboardEvent) => {
     if (event.key === "Enter") {
-      unfocus()
+      unfocus();
     }
-  }
+  };
 </script>
 
 <div class="group flex items-center gap-1 rounded-md">
   <button
     type="button"
     class={`border border-transparent min-w-0 flex-1 rounded-md px-2 text-left text-sm transition-colors text-gray-700 ${selected ? "bg-gray-50 !border-gray-300" : "hover:bg-gray-50 hover:border-gray-300"}`}
-    onclick={onclick}
+    {onclick}
     aria-label={note.name}
   >
     {#if isEditingName}
-      <input class="block truncate whitespace-nowrap overflow-hidden" bind:this={nameInput} onblur={unfocus} onkeydown={onKeyDown} bind:value={note.name}>
+      <input
+        class="block truncate whitespace-nowrap overflow-hidden"
+        bind:this={nameInput}
+        onblur={unfocus}
+        onkeydown={onKeyDown}
+        bind:value={note.name}
+      />
     {:else}
-      <span class="block truncate whitespace-nowrap overflow-hidden">{note.name}</span>
+      <span class="block truncate whitespace-nowrap overflow-hidden"
+        >{note.name}</span
+      >
     {/if}
   </button>
 
@@ -66,7 +73,7 @@
     <IconButton
       tooltip="Delete note"
       tooltipPlacement="left"
-      onclick={(event: MouseEvent) => {
+      onclick={(event) => {
         event.stopPropagation();
         ondelete?.();
       }}

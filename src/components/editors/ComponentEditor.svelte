@@ -37,7 +37,7 @@
     const existingTags = new Set(
       componentStore.components
         .filter((component) => component.id !== currentComponentId)
-        .map((component) => component.tagName)
+        .map((component) => component.tagName),
     );
 
     let suffix = 0;
@@ -63,15 +63,21 @@
     globalScope.MonacoEnvironment = {
       getWorker: (_moduleId: string, label: string) => {
         if (label === "json") return new jsonWorker();
-        if (label === "css" || label === "scss" || label === "less") return new cssWorker();
-        if (label === "html" || label === "handlebars" || label === "razor") return new htmlWorker();
-        if (label === "typescript" || label === "javascript") return new tsWorker();
+        if (label === "css" || label === "scss" || label === "less")
+          return new cssWorker();
+        if (label === "html" || label === "handlebars" || label === "razor")
+          return new htmlWorker();
+        if (label === "typescript" || label === "javascript")
+          return new tsWorker();
         return new editorWorker();
       },
     };
   };
 
-  const persistComponent = (component: ComponentData, previousTagName?: string) => {
+  const persistComponent = (
+    component: ComponentData,
+    previousTagName?: string,
+  ) => {
     componentStore.updateComponent(component, previousTagName);
     compileError = getComponentCompileError(component.tagName);
   };
@@ -91,13 +97,18 @@
 
     const previousTagName = selectedComponent.tagName;
     selectedComponent.name = (event.currentTarget as HTMLInputElement).value;
-    selectedComponent.tagName = getUniqueTagForName(selectedComponent.name, selectedComponent.id);
+    selectedComponent.tagName = getUniqueTagForName(
+      selectedComponent.name,
+      selectedComponent.id,
+    );
     persistComponent(selectedComponent, previousTagName);
   };
 
   const copySnippet = async () => {
     if (!selectedComponent) return;
-    await navigator.clipboard.writeText(`<${selectedComponent.tagName}></${selectedComponent.tagName}>`);
+    await navigator.clipboard.writeText(
+      `<${selectedComponent.tagName}></${selectedComponent.tagName}>`,
+    );
   };
 
   const syncEditorToSelection = () => {
@@ -158,10 +169,18 @@
 
 {#if selectedComponent}
   <div class="flex h-full min-h-0 flex-col gap-3 overflow-hidden p-3">
-    <div class="flex items-center justify-between gap-2 border-b border-gray-300 pb-2">
+    <div
+      class="flex items-center justify-between gap-2 border-b border-gray-300 pb-2"
+    >
       <div>
-        <h1 class="text-lg font-semibold text-gray-900">Edit Svelte component</h1>
-        <p class="text-xs text-gray-500">Use this tag in notes: <span class="font-mono">&lt;{selectedComponent.tagName}&gt;</span></p>
+        <h1 class="text-lg font-semibold text-gray-900">
+          Edit Svelte component
+        </h1>
+        <p class="text-xs text-gray-500">
+          Use this tag in notes: <span class="font-mono"
+            >&lt;{selectedComponent.tagName}&gt;</span
+          >
+        </p>
       </div>
 
       <button
@@ -174,7 +193,9 @@
     </div>
 
     <label class="flex flex-col gap-1 text-sm text-gray-700">
-      <span class="text-xs font-medium uppercase tracking-wide text-gray-500">Name</span>
+      <span class="text-xs font-medium uppercase tracking-wide text-gray-500"
+        >Name</span
+      >
       <input
         class="rounded-md border border-gray-300 bg-white px-3 py-2 outline-none focus:border-gray-500"
         value={selectedComponent.name}
@@ -182,18 +203,27 @@
       />
     </label>
 
-    <div class="min-h-0 flex-1 overflow-hidden rounded-md border border-gray-300">
+    <div
+      class="min-h-0 flex-1 overflow-hidden rounded-md border border-gray-300"
+    >
       <div class="h-full w-full" bind:this={editorContainer}></div>
     </div>
 
     {#if compileError}
-      <div class="rounded-md border border-red-300 bg-red-50 px-3 py-2 text-xs text-red-700">
-        <strong>Compile error:</strong> {compileError}
+      <div
+        class="rounded-md border border-red-300 bg-red-50 px-3 py-2 text-xs text-red-700"
+      >
+        <strong>Compile error:</strong>
+        {compileError}
       </div>
     {/if}
 
     <div class="rounded-md border border-gray-300 bg-gray-50 p-3">
-      <h2 class="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">Preview</h2>
+      <h2
+        class="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500"
+      >
+        Preview
+      </h2>
       <div class="rounded-md border border-dashed border-gray-300 bg-white p-3">
         <svelte:element this={selectedComponent.tagName}></svelte:element>
       </div>

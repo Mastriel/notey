@@ -43,7 +43,8 @@ export const HtmlEmbed = TiptapNode.create({
     return {
       html: {
         default: "",
-        parseHTML: (element) => decodeHtmlPayload(element.getAttribute("data-html")),
+        parseHTML: (element) =>
+          decodeHtmlPayload(element.getAttribute("data-html")),
         renderHTML: (attributes) => ({
           "data-html": encodeHtmlPayload(String(attributes.html ?? "")),
         }),
@@ -68,17 +69,22 @@ export const HtmlEmbed = TiptapNode.create({
 
       const deleteNode = () => {
         const position = getPos();
-        const tr = editor.state.tr.delete(position, position + currentNode.nodeSize);
+        const tr = editor.state.tr.delete(
+          position,
+          position + currentNode.nodeSize,
+        );
         editor.view.dispatch(tr);
       };
 
       const onEditClick = () => {
-        window.dispatchEvent(new CustomEvent("html-embed:edit", {
-          detail: {
-            position: getPos(),
-            html: String(currentNode.attrs.html ?? ""),
-          },
-        }));
+        window.dispatchEvent(
+          new CustomEvent("html-embed:edit", {
+            detail: {
+              position: getPos(),
+              html: String(currentNode.attrs.html ?? ""),
+            },
+          }),
+        );
       };
 
       const onDeleteClick = () => {
@@ -142,7 +148,13 @@ export const HtmlEmbed = TiptapNode.create({
   addStorage() {
     return {
       markdown: {
-        serialize(state: { write: (chunk: string) => void; closeBlock: (node: unknown) => void }, node: { attrs: { html?: string } }) {
+        serialize(
+          state: {
+            write: (chunk: string) => void;
+            closeBlock: (node: unknown) => void;
+          },
+          node: { attrs: { html?: string } },
+        ) {
           const encodedHtml = encodeHtmlPayload(String(node.attrs.html ?? ""));
           state.write(`<html-embed data-html="${encodedHtml}"></html-embed>`);
           state.closeBlock(node);
@@ -151,6 +163,3 @@ export const HtmlEmbed = TiptapNode.create({
     };
   },
 });
-
-
-

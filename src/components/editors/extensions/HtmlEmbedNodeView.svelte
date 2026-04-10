@@ -10,8 +10,14 @@
   } = $props();
 </script>
 
-<div class="my-2 rounded border border-gray-300 bg-gray-50 p-2" contenteditable="false">
-  <div class="mb-2 flex items-center justify-end gap-1 absolute right-6" contenteditable="false">
+<div
+  class="my-2 rounded border border-gray-300 bg-gray-50 p-2"
+  contenteditable="false"
+>
+  <div
+    class="mb-2 flex items-center justify-end gap-1 absolute right-6"
+    contenteditable="false"
+  >
     <button
       type="button"
       class="rounded border border-gray-300 bg-white px-2 py-1 text-xs hover:bg-gray-100"
@@ -33,4 +39,3 @@
     {@html html}
   </div>
 </div>
-

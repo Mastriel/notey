@@ -1,10 +1,9 @@
 <script>
-    import IconButton from "../IconButton.svelte";
-    import {FilePlusCorner, FileCodeCorner} from "@lucide/svelte";
+  import IconButton from "../IconButton.svelte";
+  import { FilePlusCorner, FileCodeCorner } from "@lucide/svelte";
 </script>
 
 <div class="items-center justify-center h-[80%] flex flex-col">
-
   <h1 class="text-2xl font-bold mb-5 text-center">Get Started</h1>
 
   <p>

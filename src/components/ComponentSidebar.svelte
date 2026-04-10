@@ -5,7 +5,7 @@
   import { componentStore } from "../notes/componentStore.svelte";
   import { editorManager } from "../notes/editorManager.svelte";
   import { v4 } from "uuid";
-  import base_svelte from "./base_svelte.txt?raw"
+  import base_svelte from "./base_svelte.txt?raw";
 
   const slugify = (name: string) =>
     name
@@ -16,7 +16,9 @@
 
   const toTagName = (name: string) => {
     const base = slugify(name) || "component";
-    const existingTags = new Set(componentStore.components.map((component) => component.tagName));
+    const existingTags = new Set(
+      componentStore.components.map((component) => component.tagName),
+    );
 
     let suffix = 0;
     let tagName = `x-${base}`;
@@ -56,7 +58,8 @@
       source: base_svelte.replaceAll("%s", name),
     });
 
-    editorManager.activePage = componentStore.components[componentStore.components.length - 1];
+    editorManager.activePage =
+      componentStore.components[componentStore.components.length - 1];
   };
 
   const selectComponent = (component: ComponentData) => {
@@ -64,13 +67,17 @@
   };
 
   const copyTagSnippet = async (component: ComponentData) => {
-    await navigator.clipboard.writeText(`<${component.tagName}></${component.tagName}>`);
+    await navigator.clipboard.writeText(
+      `<${component.tagName}></${component.tagName}>`,
+    );
   };
 
   const insertTagSnippet = (component: ComponentData) => {
-    window.dispatchEvent(new CustomEvent("component-tag:insert", {
-      detail: { html: `<${component.tagName}></${component.tagName}>` },
-    }));
+    window.dispatchEvent(
+      new CustomEvent("component-tag:insert", {
+        detail: { html: `<${component.tagName}></${component.tagName}>` },
+      }),
+    );
   };
 
   const deleteComponent = (component: ComponentData) => {
@@ -83,7 +90,11 @@
 </script>
 
 <div class="p-1 flex gap-1 border-b bg-gray-50 border-gray-300">
-  <IconButton tooltip="Create a Component" tooltipPlacement="right" onclick={createComponent}>
+  <IconButton
+    tooltip="Create a Component"
+    tooltipPlacement="right"
+    onclick={createComponent}
+  >
     <FileCodeCorner class="text-gray-500" size={16} />
   </IconButton>
 </div>
@@ -97,11 +108,19 @@
         onclick={() => selectComponent(component)}
         aria-label={component.name}
       >
-        <span class="block truncate whitespace-nowrap overflow-hidden font-medium">{component.name}</span>
-        <span class="block truncate whitespace-nowrap overflow-hidden text-xs text-gray-500">&lt;{component.tagName}&gt;</span>
+        <span
+          class="block truncate whitespace-nowrap overflow-hidden font-medium"
+          >{component.name}</span
+        >
+        <span
+          class="block truncate whitespace-nowrap overflow-hidden text-xs text-gray-500"
+          >&lt;{component.tagName}&gt;</span
+        >
       </button>
 
-      <div class="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
+      <div
+        class="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100"
+      >
         <IconButton
           tooltip="Insert into note"
           tooltipPlacement="left"

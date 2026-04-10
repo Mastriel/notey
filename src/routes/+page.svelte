@@ -2,7 +2,7 @@
   import "../app.css";
   import { invoke } from "@tauri-apps/api/core";
   import NoteSidebar from "../components/NoteSidebar.svelte";
-    import { Pane, PaneGroup, PaneResizer } from "paneforge";
+  import { Pane, PaneGroup, PaneResizer } from "paneforge";
   import Editor from "../components/editors/Editor.svelte";
   import ComponentSidebar from "../components/ComponentSidebar.svelte";
   let name = $state("");
@@ -16,11 +16,9 @@
   }
 </script>
 
-
-
 <PaneGroup direction="horizontal">
   <Pane minSize={5} defaultSize={10} maxSize={40}>
-    <NoteSidebar/>
+    <NoteSidebar />
   </Pane>
 
   <PaneResizer>
@@ -30,7 +28,7 @@
   </PaneResizer>
 
   <Pane>
-    <Editor/>
+    <Editor />
   </Pane>
 
   <PaneResizer>
@@ -40,6 +38,6 @@
   </PaneResizer>
 
   <Pane minSize={5} defaultSize={10} maxSize={40}>
-    <ComponentSidebar/>
+    <ComponentSidebar />
   </Pane>
 </PaneGroup>

@@ -7,9 +7,13 @@
   const {
     children,
     tooltip,
-    tooltipPlacement = 'bottom',
+    tooltipPlacement = "bottom",
     ...rest
-  }: { tooltip?: string; tooltipPlacement?: Placement, children: Snippet } & HTMLAttributes<HTMLButtonElement> = $props();
+  }: {
+    tooltip?: string;
+    tooltipPlacement?: Placement;
+    children: Snippet;
+  } & HTMLAttributes<HTMLButtonElement> = $props();
 </script>
 
 {#if tooltip}

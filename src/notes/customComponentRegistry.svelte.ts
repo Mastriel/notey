@@ -4,7 +4,10 @@ import * as svelteApi from "svelte";
 import * as svInternals from "./svelteInternals";
 import type { ComponentData } from "./componentData.svelte";
 
-type CompiledComponent = (anchor: Node, props?: Record<string, unknown>) => void;
+type CompiledComponent = (
+  anchor: Node,
+  props?: Record<string, unknown>,
+) => void;
 type MountedComponent = ReturnType<typeof mount>;
 
 const componentDefinitions = new Map<string, ComponentData>();
@@ -22,10 +25,14 @@ const escapeHtml = (value: string) =>
     .replaceAll("'", "&#39;");
 
 const getExportedComponentName = (compiledCode: string) => {
-  const functionMatch = compiledCode.match(/export\s+default\s+function\s+([A-Za-z_$][\w$]*)/);
+  const functionMatch = compiledCode.match(
+    /export\s+default\s+function\s+([A-Za-z_$][\w$]*)/,
+  );
   if (functionMatch?.[1]) return functionMatch[1];
 
-  const classMatch = compiledCode.match(/export\s+default\s+class\s+([A-Za-z_$][\w$]*)/);
+  const classMatch = compiledCode.match(
+    /export\s+default\s+class\s+([A-Za-z_$][\w$]*)/,
+  );
   if (classMatch?.[1]) return classMatch[1];
 
   return null;
@@ -37,7 +44,9 @@ const normalizeNamedImports = (imports: string) =>
     .map((part) => part.trim())
     .filter(Boolean)
     .map((part) => {
-      const aliasMatch = part.match(/^([A-Za-z_$][\w$]*)\s+as\s+([A-Za-z_$][\w$]*)$/);
+      const aliasMatch = part.match(
+        /^([A-Za-z_$][\w$]*)\s+as\s+([A-Za-z_$][\w$]*)$/,
+      );
       if (!aliasMatch) return part;
       return `${aliasMatch[1]}: ${aliasMatch[2]}`;
     })
@@ -59,7 +68,10 @@ const rewriteJsDelivrImports = (code: string) => {
   // import "https://cdn.jsdelivr.net/...";
   rewritten = rewritten.replace(
     /^import\s+['"](https?:\/\/[^'"]+)['"];\s*$/gm,
-    (_match, specifier: string) => (isJsDelivrUrl(specifier) ? `await import(${JSON.stringify(specifier)});` : _match)
+    (_match, specifier: string) =>
+      isJsDelivrUrl(specifier)
+        ? `await import(${JSON.stringify(specifier)});`
+        : _match,
   );
 
   // import * as ns from "https://cdn.jsdelivr.net/...";
@@ -68,7 +80,7 @@ const rewriteJsDelivrImports = (code: string) => {
     (_match, namespace: string, specifier: string) =>
       isJsDelivrUrl(specifier)
         ? `const ${namespace} = await import(${JSON.stringify(specifier)});`
-        : _match
+        : _match,
   );
 
   // import { a, b as c } from "https://cdn.jsdelivr.net/...";
@@ -77,18 +89,23 @@ const rewriteJsDelivrImports = (code: string) => {
     (_match, namedImports: string, specifier: string) =>
       isJsDelivrUrl(specifier)
         ? `const { ${normalizeNamedImports(namedImports)} } = await import(${JSON.stringify(specifier)});`
-        : _match
+        : _match,
   );
 
   // import defaultExport, { a, b as c } from "https://cdn.jsdelivr.net/...";
   rewritten = rewritten.replace(
     /^import\s+([A-Za-z_$][\w$]*)\s*,\s*\{\s*([^}]+)\s*\}\s+from\s+['"](https?:\/\/[^'"]+)['"];\s*$/gm,
-    (_match, defaultImport: string, namedImports: string, specifier: string) => {
+    (
+      _match,
+      defaultImport: string,
+      namedImports: string,
+      specifier: string,
+    ) => {
       if (!isJsDelivrUrl(specifier)) return _match;
       importIndex += 1;
       const moduleVar = `__jsdelivrMod${importIndex}`;
       return `const ${moduleVar} = await import(${JSON.stringify(specifier)});\nconst { default: ${defaultImport}, ${normalizeNamedImports(namedImports)} } = ${moduleVar};`;
-    }
+    },
   );
 
   // import defaultExport from "https://cdn.jsdelivr.net/...";
@@ -97,7 +114,7 @@ const rewriteJsDelivrImports = (code: string) => {
     (_match, defaultImport: string, specifier: string) =>
       isJsDelivrUrl(specifier)
         ? `const { default: ${defaultImport} } = await import(${JSON.stringify(specifier)});`
-        : _match
+        : _match,
   );
 
   return rewritten;
@@ -106,25 +123,34 @@ const rewriteJsDelivrImports = (code: string) => {
 const toRunnableCode = (compiledCode: string, componentName: string) => {
   const withoutSideEffectImports = compiledCode
     .replace(/^import\s+['"].*['"];\s*$/gm, "")
-    .replace(/^import\s+\*\s+as\s+\$\s+from\s+['"]svelte\/internal\/client['"];\s*$/gm, "");
+    .replace(
+      /^import\s+\*\s+as\s+\$\s+from\s+['"]svelte\/internal\/client['"];\s*$/gm,
+      "",
+    );
 
   const withSvelteBindings = withoutSideEffectImports
     .replace(
       /^import\s+\{\s*([^}]+)\s*\}\s+from\s+['"]svelte['"];\s*$/gm,
-      (_match, imports: string) => `const { ${normalizeNamedImports(imports)} } = __svelte;`
+      (_match, imports: string) =>
+        `const { ${normalizeNamedImports(imports)} } = __svelte;`,
     )
     .replace(
       /^import\s+\*\s+as\s+([A-Za-z_$][\w$]*)\s+from\s+['"]svelte['"];\s*$/gm,
-      (_match, namespace: string) => `const ${namespace} = __svelte;`
+      (_match, namespace: string) => `const ${namespace} = __svelte;`,
     );
 
   const withExternalBindings = rewriteJsDelivrImports(withSvelteBindings);
 
   if (/^import\s+/m.test(withExternalBindings)) {
-    throw new Error("Only imports from 'svelte' or 'https://cdn.jsdelivr.net' are supported in user components.");
+    throw new Error(
+      "Only imports from 'svelte' or 'https://cdn.jsdelivr.net' are supported in user components.",
+    );
   }
 
-  const withoutExports = withExternalBindings.replace(/export\s+default\s+/, "");
+  const withoutExports = withExternalBindings.replace(
+    /export\s+default\s+/,
+    "",
+  );
 
   return `${withoutExports}\nreturn ${componentName};`;
 };
@@ -141,9 +167,13 @@ const compileSvelteSource = async (source: string) => {
   }
 
   const runnableCode = toRunnableCode(compiled.js.code, componentName);
-  const factory = new Function("$", "__svelte", `return (async () => {\n${runnableCode}\n})();`) as (
+  const factory = new Function(
+    "$",
+    "__svelte",
+    `return (async () => {\n${runnableCode}\n})();`,
+  ) as (
     $runtime: typeof svInternals,
-    svelte: typeof svelteApi
+    svelte: typeof svelteApi,
   ) => Promise<CompiledComponent>;
 
   return factory(svInternals, svelteApi);
@@ -203,7 +233,7 @@ const defineCustomElement = (tagName: string) => {
 
         mountedByElement.set(this, mounted);
       }
-    }
+    },
   );
 };
 
@@ -232,7 +262,8 @@ export const registerComponentDefinition = (definition: ComponentData) => {
     })
     .catch((error) => {
       if (compileRunIds.get(definition.tagName) !== runId) return;
-      const message = error instanceof Error ? error.message : "Unknown compilation error";
+      const message =
+        error instanceof Error ? error.message : "Unknown compilation error";
       compileErrors.set(definition.tagName, message);
       refreshTaggedInstances(definition.tagName);
     });
@@ -253,5 +284,3 @@ export const getRegisteredComponentDefinition = (tagName: string) =>
 
 export const getRegisteredComponentDefinitions = () =>
   Array.from(componentDefinitions.values());
-
-
