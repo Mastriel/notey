@@ -1,31 +1,26 @@
 import {SvelteMap} from "svelte/reactivity";
 
+type NoteContent = any;
+
 export type Note = {
   name: string,
-  content: string,
+  type: "note",
+  content: NoteContent,
+  id: string
 }
 
 export class NoteStore {
-  private notes: Map<string, Note> = new SvelteMap()
+  public notes: Note[] = $state([])
 
-  addNote(note: Note) {
-    this.notes.set(note.name, note)
+  public addNote(note: Note) {
+    const statefulNote = $state(note)
+    this.notes.push(statefulNote)
   }
 
-  removeNote(note: Note) {
-    this.notes.delete(note.name)
-  }
-
-  removeNoteByName(name: string) {
-    this.notes.delete(name)
-  }
-
-  getNote(name: string) {
-    return this.notes.get(name)
-  }
-
-  getAllNotes() {
-    return [...this.notes.values()]
+  public removeNoteByName(name: string) {
+    const note = this.notes?.find(it => it.name == name)
+    if (!note) return
+    this.notes.splice(this.notes.indexOf(note), 1)
   }
 }
 
