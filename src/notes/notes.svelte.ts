@@ -1,6 +1,6 @@
 import {SvelteMap} from "svelte/reactivity";
 
-type Note = {
+export type Note = {
   name: string,
   content: string,
 }
@@ -8,15 +8,25 @@ type Note = {
 export class NoteStore {
   private notes: Map<string, Note> = new SvelteMap()
 
-  private addNote(note: Note) {
+  addNote(note: Note) {
     this.notes.set(note.name, note)
   }
 
-  private removeNote(note: Note) {
+  removeNote(note: Note) {
     this.notes.delete(note.name)
   }
 
-  private removeNoteByName(name: string) {
+  removeNoteByName(name: string) {
     this.notes.delete(name)
   }
+
+  getNote(name: string) {
+    return this.notes.get(name)
+  }
+
+  getAllNotes() {
+    return [...this.notes.values()]
+  }
 }
+
+export const noteStore = new NoteStore()
